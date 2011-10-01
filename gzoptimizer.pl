@@ -12,7 +12,7 @@ while(<>){
 	$data .= $_;
 }
 
-while($data =~ m/<((?<!\?)[a-z-]+)\s*(.*?)(\/?>)/ig){
+while($data =~ m/<[^?]([a-z-]+)\s*(.*?)(\/?>)/ig){
 	my $tag = $1;
 	my $tags = $2;
 	my $end = $3;
@@ -25,12 +25,17 @@ while($data =~ m/<((?<!\?)[a-z-]+)\s*(.*?)(\/?>)/ig){
 		my $attr = $1;
 		my $value = $2;
 		
+		$value = "=$value" if defined $value;
+		
 		$attrs{$attr} = $value;
+		
+		undef $attr;
+		undef $value;
 	}
 	
 	$fulltag = "<$tag";
 	foreach my $key (sort keys %attrs){
-		$fulltag .= " $key=" . $attrs{$key};
+		$fulltag .= " $key" . $attrs{$key};
 	}
 	$fulltag .= $end;
 	
